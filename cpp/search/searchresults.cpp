@@ -30,8 +30,8 @@ bool Search::getPlaySelectionValues(
   vector<Loc>& locs, vector<double>& playSelectionValues, double scaleMaxToAtLeast,
   bool allowDirectPolicyMoves
 ) const {
-  std::mutex& mutex = mutexPool->getMutex(node.lockIdx);
-  lock_guard<std::mutex> lock(mutex);
+  Mutex& mutex = mutexPool->getMutex(node.lockIdx);
+  Lock lock(mutex);
   double lcbBuf[NNPos::MAX_NN_POLICY_SIZE];
   double radiusBuf[NNPos::MAX_NN_POLICY_SIZE];
   assert(node.numChildren <= NNPos::MAX_NN_POLICY_SIZE);
@@ -312,8 +312,8 @@ ReportedSearchValues Search::getRootValuesAssertSuccess() const {
 }
 
 bool Search::getNodeValues(const SearchNode& node, ReportedSearchValues& values) const {
-  std::mutex& mutex = mutexPool->getMutex(node.lockIdx);
-  unique_lock<std::mutex> lock(mutex);
+  Mutex& mutex = mutexPool->getMutex(node.lockIdx);
+  Lock lock(mutex);
   shared_ptr<NNOutput> nnOutput = node.nnOutput;
   lock.unlock();
   if(nnOutput == nullptr)
@@ -490,8 +490,8 @@ bool Search::shouldSuppressPassAlreadyLocked(const SearchNode* n) const {
 double Search::getPolicySurprise() const {
   if(rootNode == NULL)
     return 0.0;
-  std::mutex& mutex = mutexPool->getMutex(rootNode->lockIdx);
-  lock_guard<std::mutex> lock(mutex);
+  Mutex& mutex = mutexPool->getMutex(rootNode->lockIdx);
+  Lock lock(mutex);
   if(rootNode->nnOutput == nullptr)
     return 0.0;
 
@@ -531,8 +531,8 @@ double Search::getPolicySurprise() const {
 void Search::printRootOwnershipMap(ostream& out, Player perspective) const {
   if(rootNode == NULL)
     return;
-  std::mutex& mutex = mutexPool->getMutex(rootNode->lockIdx);
-  lock_guard<std::mutex> lock(mutex);
+  Mutex& mutex = mutexPool->getMutex(rootNode->lockIdx);
+  Lock lock(mutex);
   if(rootNode->nnOutput == nullptr)
     return;
 
@@ -556,8 +556,8 @@ void Search::printRootOwnershipMap(ostream& out, Player perspective) const {
 void Search::printRootPolicyMap(ostream& out) const {
   if(rootNode == NULL)
     return;
-  std::mutex& mutex = mutexPool->getMutex(rootNode->lockIdx);
-  lock_guard<std::mutex> lock(mutex);
+  Mutex& mutex = mutexPool->getMutex(rootNode->lockIdx);
+  Lock lock(mutex);
   if(rootNode->nnOutput == nullptr)
     return;
 
@@ -577,8 +577,8 @@ void Search::printRootPolicyMap(ostream& out) const {
 void Search::printRootEndingScoreValueBonus(ostream& out) const {
   if(rootNode == NULL)
     return;
-  std::mutex& mutex = mutexPool->getMutex(rootNode->lockIdx);
-  unique_lock<std::mutex> lock(mutex);
+  Mutex& mutex = mutexPool->getMutex(rootNode->lockIdx);
+  Lock lock(mutex);
   if(rootNode->nnOutput == nullptr)
     return;
 
@@ -651,8 +651,8 @@ void Search::appendPVForMove(vector<Loc>& buf, vector<Loc>& scratchLocs, vector<
       return;
 
     const SearchNode& node = *n;
-    std::mutex& mutex = mutexPool->getMutex(node.lockIdx);
-    unique_lock<std::mutex> lock(mutex);
+    Mutex& mutex = mutexPool->getMutex(node.lockIdx);
+    Lock lock(mutex);
     assert(node.numChildren >= scratchValues.size());
     //We rely on the fact that children are never reordered - we can access this safely
     //despite dropping the lock in between computing play selection values and now
@@ -780,8 +780,8 @@ void Search::getAnalysisData(
   double radiusBuf[NNPos::MAX_NN_POLICY_SIZE];
   float policyProbs[NNPos::MAX_NN_POLICY_SIZE];
   {
-    std::mutex& mutex = mutexPool->getMutex(node.lockIdx);
-    lock_guard<std::mutex> lock(mutex);
+    Mutex& mutex = mutexPool->getMutex(node.lockIdx);
+    Lock lock(mutex);
     numChildren = node.numChildren;
     for(int i = 0; i<numChildren; i++)
       children.push_back(node.children[i]);
@@ -1120,8 +1120,8 @@ double Search::getAverageTreeOwnershipHelper(vector<double>& accum, int64_t minV
   if(node == NULL)
     return 0;
 
-  std::mutex& mutex = mutexPool->getMutex(node->lockIdx);
-  unique_lock<std::mutex> lock(mutex);
+  Mutex& mutex = mutexPool->getMutex(node->lockIdx);
+  Lock lock(mutex);
   if(node->nnOutput == nullptr)
     return 0;
 

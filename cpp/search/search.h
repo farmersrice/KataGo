@@ -165,7 +165,7 @@ struct Search {
   SearchNode* rootNode;
 
   //Services--------------------------------------------------------------
-  MutexPool* mutexPool;
+  MutexPoolSpinlock* mutexPool;
   NNEvaluator* nnEvaluator; //externally owned
   int nnXLen;
   int nnYLen;

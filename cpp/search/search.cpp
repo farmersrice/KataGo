@@ -220,7 +220,7 @@ Search::Search(SearchParams params, NNEvaluator* nnEval, const string& rSeed)
   );
 
   rootNode = NULL;
-  mutexPool = new MutexPool(params.mutexPoolSize);
+  mutexPool = new MutexPoolSpinlock(params.mutexPoolSize);
 
   rootHistory.clear(rootBoard,rootPla,Rules(),0);
   rootKoHashTable->recompute(rootHistory);
@@ -682,8 +682,8 @@ void Search::recursivelyRecomputeStats(SearchNode& node, SearchThread& thread, b
   int numChildren;
   bool noNNOutput;
   {
-    std::mutex& mutex = mutexPool->getMutex(node.lockIdx);
-    lock_guard<std::mutex> lock(mutex);
+    Mutex& mutex = mutexPool->getMutex(node.lockIdx);
+    Lock lock(mutex);
     numChildren = node.numChildren;
     for(int i = 0; i<numChildren; i++)
       children.push_back(node.children[i]);
@@ -1479,8 +1479,8 @@ void Search::recomputeNodeStats(SearchNode& node, SearchThread& thread, int numV
   int64_t totalChildVisits = 0;
   int64_t maxChildVisits = 0;
 
-  std::mutex& mutex = mutexPool->getMutex(node.lockIdx);
-  unique_lock<std::mutex> lock(mutex);
+  Mutex& mutex = mutexPool->getMutex(node.lockIdx);
+  Lock lock(mutex);
 
   int numChildren = node.numChildren;
   int numGoodChildren = 0;
@@ -1776,8 +1776,8 @@ void Search::playoutDescend(
     }
   }
 
-  std::mutex& mutex = mutexPool->getMutex(node.lockIdx);
-  unique_lock<std::mutex> lock(mutex);
+  Mutex& mutex = mutexPool->getMutex(node.lockIdx);
+  Lock lock(mutex);
 
   //Hit leaf node, finish
   if(node.nnOutput == nullptr) {
