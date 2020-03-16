@@ -13,6 +13,7 @@ SearchParams::SearchParams()
    dynamicScoreCenterScale(1.0),
    noResultUtilityForWhite(0.0),
    drawEquivalentWinsForWhite(0.5),
+   policySharpeningFactor(1.0f),
    cpuctExploration(1.0),
    cpuctExplorationLog(0.0),
    cpuctExplorationBase(500),

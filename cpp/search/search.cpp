@@ -1694,6 +1694,26 @@ void Search::initNodeNNOutput(
     node.nnOutput = std::move(thread.nnResultBuf.result);
   }
 
+  
+  //Scale policies
+  //Check for non-one policySharpeningFactor this way in case some optimization makes it slightly different from the actual 1.0 representation 
+  if(abs(searchParams.policySharpeningFactor - 1.0f) > 0.0001f) {
+    float sum = 0;
+    float* policyProbs = node.nnOutput->policyProbs;
+    for(int i = 0; i<NNPos::MAX_NN_POLICY_SIZE; i++) {
+      //powf on a 3700x takes approx. 6.5 ms for 1 million calls with policySharpeningFactor = 1.2 (aka: 150 million calls per second). 
+      //Definitely not a limiting factor.
+      if (policyProbs[i] < 0.0f) continue; //since policies are negative for invalid moves
+
+      policyProbs[i] = powf(policyProbs[i], searchParams.policySharpeningFactor); 
+      sum += policyProbs[i];
+    }
+
+    for(int i = 0; i<NNPos::MAX_NN_POLICY_SIZE; i++) {
+      if (policyProbs[i] >= 0.0f) policyProbs[i] /= sum;
+    }
+  }
+
   maybeAddPolicyNoiseAndTempAlreadyLocked(thread,node,isRoot);
   node.nnOutputAge = searchNodeAge;
 

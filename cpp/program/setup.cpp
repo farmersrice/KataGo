@@ -333,6 +333,9 @@ vector<SearchParams> Setup::loadParams(
     if(cfg.contains("drawEquivalentWinsForWhite"+idxStr)) params.drawEquivalentWinsForWhite = cfg.getDouble("drawEquivalentWinsForWhite"+idxStr, 0.0, 1.0);
     else if(cfg.contains("drawEquivalentWinsForWhite"))   params.drawEquivalentWinsForWhite = cfg.getDouble("drawEquivalentWinsForWhite",        0.0, 1.0);
     else                                                  params.drawEquivalentWinsForWhite = 0.5;
+    if(cfg.contains("policySharpeningFactor"+idxStr)) params.policySharpeningFactor = cfg.getFloat("policySharpeningFactor"+idxStr, 0.0, 10.0);
+    else if(cfg.contains("policySharpeningFactor"))   params.policySharpeningFactor = cfg.getFloat("policySharpeningFactor",        0.0, 10.0);
+    else                                              params.policySharpeningFactor = 1.0f;
 
     if(cfg.contains("dynamicScoreCenterZeroWeight"+idxStr)) params.dynamicScoreCenterZeroWeight = cfg.getDouble("dynamicScoreCenterZeroWeight"+idxStr, 0.0, 1.0);
     else if(cfg.contains("dynamicScoreCenterZeroWeight"))   params.dynamicScoreCenterZeroWeight = cfg.getDouble("dynamicScoreCenterZeroWeight",        0.0, 1.0);

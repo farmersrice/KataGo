@@ -13,6 +13,7 @@ struct SearchParams {
   double dynamicScoreCenterScale; //Adjust dynamic score scale. 1.0 indicates that score is cared about roughly up to board sizeish.
   double noResultUtilityForWhite; //Utility of having a no-result game (simple ko rules or nonterminating territory encore)
   double drawEquivalentWinsForWhite; //Consider a draw to be this many wins and one minus this many losses.
+  float policySharpeningFactor; //Exponent of raw policies while performing search. Policies are rescaled to sum to 1 after application.
 
   //Search tree exploration parameters
   double cpuctExploration;  //Constant factor on exploration, should also scale up linearly with magnitude of utility
